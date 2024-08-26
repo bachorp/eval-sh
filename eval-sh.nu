@@ -1,6 +1,8 @@
 # Evaluates the input in another shell and detects changes in the environment.
 # Returns a record that may be passed on to `load-env`.
 #
+# Note that (only) the default 'from_string' environment conversions (PATH, Path) will be applied.
+#
 # Works out of the box with bash, zsh, fish and others.
 # For PowerShell use `eval-sh pwsh`. For Nushell use `eval-sh nu`.
 def eval-sh [
