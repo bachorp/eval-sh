@@ -1,10 +1,8 @@
-# Evaluates the input in another shell and detects changes in the environment.
-# Returns a record that may be passed on to `load-env`.
+# Evaluates the input in another shell and detects changes in the environment. Returns a record of modified variables that may be passed on to `load-env`.
 #
-# Note that (only) the default 'from_string' environment conversions (PATH, Path) will be applied.
+# Note that using the default --save-env-command, (only) the default 'from_string' environment conversions (PATH, Path) will be applied. Furthermore, some special variables (PWD, NU_VERSION, NU_LOG_*) will be discarded.
 #
-# Works out of the box with bash, zsh, fish and others.
-# For PowerShell use `eval-sh pwsh`. For Nushell use `eval-sh nu`.
+# Works out of the box with bash, zsh, fish and others. For PowerShell use `eval-sh pwsh`. For Nushell use `eval-sh nu`.
 def eval-sh [
     --shell (-s): string = /bin/sh # Shell to evaluate the input with
     --execute-script: closure # Execute a given script in a given shell
@@ -14,7 +12,7 @@ def eval-sh [
 ]: string -> record {
     # Unfortunately, we cannot use closures as default arguments. https://github.com/nushell/nushell/issues/13684
     let save_env_cmd = $save_env_cmd
-        | default { |out: string| [$env.SHELL --no-config-file --commands $'$env | to nuon | save --force ($out)'] }
+        | default { |out: string| [$env.SHELL --no-config-file --commands $'$env | to nuon | save --force ($out)'] } # Using nu as an environment probe is not ideal (see above). However, anything (more) reliable (available anywhere, proper escaping) will have to be shipped by Nushell.
     let preprocess_input = $preprocess_input
         | default { |input: string| if ($input | str ends-with "\n") { $input } else { $input + "\n" }}
     let cmd_to_script = $cmd_to_script
