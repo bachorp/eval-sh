@@ -32,7 +32,7 @@ def eval-sh [
     rm $tmp_before $tmp_after
     $after
         | transpose name value
-        | reduce --fold {} { |it, acc| if ($it.name in $before and ($before | get $it.name) == $it.value) { $acc } else { $acc | insert $it.name $it.value } }
+        | reduce --fold {} { |it, acc| if ($it.name in $before and ($before | get $it.name) == $it.value) { $acc } else { { ...$acc, $it.name: $it.value } } }
 }
 
 alias "eval-sh pwsh" = eval-sh --shell pwsh --cmd-to-script { |cmd| '& ' + ($cmd | each { |c| $"'($c)'" } | str join ' ') + "\n" }
